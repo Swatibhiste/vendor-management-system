@@ -1,0 +1,50 @@
+package com.example.vendor.controller;
+
+import com.example.vendor.model.Vendor;
+import com.example.vendor.repository.VendorRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/vendors")
+public class VendorController {
+
+    @Autowired
+    private VendorRepository vendorRepository;
+
+    @GetMapping
+    public List<Vendor> getAllVendors() {
+        return vendorRepository.findAll();
+    }
+
+    @PostMapping
+    public Vendor createVendor(@RequestBody Vendor vendor) {
+        return vendorRepository.save(vendor);
+    }
+
+    @GetMapping("/{id}")
+    public Vendor getVendorById(@PathVariable Long id) {
+        return vendorRepository.findById(id).orElse(null);
+    }
+
+    @PutMapping("/{id}")
+    public Vendor updateVendor(@PathVariable Long id, @RequestBody Vendor vendorDetails) {
+        Vendor vendor = vendorRepository.findById(id).orElse(null);
+        if(vendor != null) {
+            vendor.setName(vendorDetails.getName());
+            vendor.setCompany(vendorDetails.getCompany());
+            vendor.setContact(vendorDetails.getContact());
+            vendor.setSkill(vendorDetails.getSkill());
+            return vendorRepository.save(vendor);
+        }
+        return null;
+    }
+
+    @DeleteMapping("/{id}")
+    public String deleteVendor(@PathVariable Long id) {
+        vendorRepository.deleteById(id);
+        return "Vendor deleted with id: " + id;
+    }
+}
